@@ -20,7 +20,7 @@ namespace Prueba_de_velocidad
             string[] negativeInit = { "LOW", "LOW", "LOW", "LOW", "LOW" };
             string[] valuesON = { "HIGH", "HIGH", "HIGH", "HIGH", "HIGH" };
             var cantidadMotores = 5;
-            var numeroPruebas = 1;
+            var numeroPruebas = 3;
 
 
             HapticsGlove.HapticsGlove glove = new HapticsGlove.HapticsGlove();
@@ -38,34 +38,75 @@ namespace Prueba_de_velocidad
             for (var i = 0; i < cantidadMotores; i++) {
                 var indice = i + 1;
                 
-                var nombreArchivo = "prueba" +fecha +"-"+ indice + "Motor.txt";
-                Console.WriteLine(nombreArchivo);
-                StreamWriter writer = File.CreateText(nombreArchivo);
+                var nombreArchivoDigital = "prueba" +fecha +"-"+ indice + "Motor-Digital.txt";
+                Console.WriteLine(nombreArchivoDigital);
+                StreamWriter writerDigital = File.CreateText(nombreArchivoDigital);
+                writerDigital.WriteLine("TiempoGeneracionYEnvioMensaje,TiempoActivacionActuadores,TiempoTotal");
 
-                int[] pinesPrueba = new int[i + 1];
-                string[] valuesONPrueba = new string[i + 1];
-                string[] valuesOFFPrueba = new string[i + 1];
+                int[] pinesPruebaDigital = new int[i + 1];
+                string[] valuesONPruebaDigital = new string[i + 1];
+                string[] valuesOFFPruebaDigital = new string[i + 1];
 
                 for (var j = 0; j < indice ; j++ ) {
 
-                    pinesPrueba[j] = positivePins[j];
-                    valuesONPrueba[j] = "HIGH";
-                    valuesOFFPrueba[j] = "LOW";
+                    pinesPruebaDigital[j] = positivePins[j];
+                    valuesONPruebaDigital[j] = "HIGH";
+                    valuesOFFPruebaDigital[j] = "LOW";
                 }
                 for (var k = 0; k < numeroPruebas; k++) {
 
                     var watch = Stopwatch.StartNew();
-                    glove.ActivateMotor(pinesPrueba, valuesONPrueba);
+                    glove.ActivateMotorTimeTest(pinesPruebaDigital, valuesONPruebaDigital);
                     watch.Stop();
-                    var microSegundos =  watch.ElapsedTicks * 1000000.0 / Stopwatch.Frequency;
-                    Console.WriteLine(microSegundos);
-                    writer.WriteLine(watch.ElapsedMilliseconds);
+                    var tiempoMensaje =  watch.ElapsedTicks * 1000000 / Stopwatch.Frequency;
+                    long tiempoActivacion = Convert.ToInt64(glove.ReadLine());
+                    var tiempoTotal = tiempoMensaje + tiempoActivacion; 
+                    Console.WriteLine(tiempoMensaje);
+                    Console.WriteLine(tiempoActivacion);
+                    Console.WriteLine(tiempoTotal);
+                    writerDigital.WriteLine(tiempoMensaje + "," + tiempoActivacion + "," +tiempoTotal);
                     Thread.Sleep(200);
-                    glove.ActivateMotor(pinesPrueba, valuesOFFPrueba);
-                    Thread.Sleep(1000);
+                    glove.ActivateMotor(pinesPruebaDigital, valuesOFFPruebaDigital);
+                    Thread.Sleep(500);
                 }
 
-                writer.Close();
+                writerDigital.Close();
+
+                var nombreArchivoAnalogo = "prueba" + fecha + "-" + indice + "Motor-Analogo.txt";
+                Console.WriteLine(nombreArchivoAnalogo);
+                StreamWriter writerAnalogo = File.CreateText(nombreArchivoAnalogo);
+                writerAnalogo.WriteLine("TiempoGeneracionYEnvioMensaje,TiempoActivacionActuadores,TiempoTotal");
+
+                int[] pinesPruebaAnalogo = new int[i + 1];
+                string[] valuesONPruebaAnalogo = new string[i + 1];
+                string[] valuesOFFPruebaAnalogo = new string[i + 1];
+
+                for (var j = 0; j < indice; j++)
+                {
+
+                    pinesPruebaAnalogo[j] = positivePins[j];
+                    valuesONPruebaAnalogo[j] = "255";
+                    valuesOFFPruebaAnalogo[j] = "0";
+                }
+                for (var k = 0; k < numeroPruebas; k++)
+                {
+
+                    var watch = Stopwatch.StartNew();
+                    glove.ActivateMotorTimeTest(pinesPruebaAnalogo, valuesONPruebaAnalogo);
+                    watch.Stop();
+                    var tiempoMensaje = watch.ElapsedTicks * 1000000 / Stopwatch.Frequency;
+                    long tiempoActivacion = Convert.ToInt64(glove.ReadLine());
+                    var tiempoTotal = tiempoMensaje + tiempoActivacion;
+                    Console.WriteLine(tiempoMensaje);
+                    Console.WriteLine(tiempoActivacion);
+                    Console.WriteLine(tiempoTotal);
+                    writerAnalogo.WriteLine(tiempoMensaje + "," + tiempoActivacion + "," + tiempoTotal);
+                    Thread.Sleep(200);
+                    glove.ActivateMotor(pinesPruebaAnalogo, valuesOFFPruebaAnalogo);
+                    Thread.Sleep(500);
+                }
+
+                writerAnalogo.Close();
             }
 
 

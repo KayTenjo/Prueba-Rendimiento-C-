@@ -33,8 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HapticsGlove">
-      <HintPath>..\..\..\..\Desktop\HapticsGlove.dll</HintPath>
+    <Reference Include="HapticsGlove, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Source\Repos\Prueba_API_CShartp\HapticsGlove\bin\Debug\HapticsGlove.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
